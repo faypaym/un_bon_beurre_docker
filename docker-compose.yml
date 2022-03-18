@@ -1,0 +1,91 @@
+#docker compose est le fichier qui admnistre tout
+#cet ici que l'on defini toutes les instances
+
+version: '3'
+
+
+networks:
+  customnetwork:
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+
+
+services:
+
+    db:
+        image: mariadb
+        restart: always
+        command: --init-file /data/application/init.sql
+        environment:
+            MYSQL_USER: 'root'
+            MYSQL_DATABASE: 'un_bon_beurre'
+            MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: 'yes'
+        volumes:
+            - ./MariaDB/init.sql:/data/application/init.sql
+        networks:
+            customnetwork:
+                ipv4_address: 172.20.0.12
+
+
+    collector:
+        image: collector
+        command: python3.7 /home/Server.py
+        build: collector/.
+        ports:
+            - "7777"
+        networks:
+            customnetwork:
+                ipv4_address: 172.20.0.10
+
+
+    inserts:
+        image: inserts
+        command: python3 /home/Server.py
+        build: inserts/.
+        ports:
+            - "8888"
+        networks:
+            customnetwork:
+                ipv4_address: 172.20.0.11
+
+
+    unites1:
+        image: unites1
+        command: python3.7 /home/Client.py 1
+        build: unites1/.
+        networks:
+            - customnetwork
+
+    unites2:
+        image: unites2
+        command: python3.7 /home/Client.py 2
+        build: unites1/.
+        networks:
+            - customnetwork
+
+    unites3:
+        image: unites3
+        command: python3.7 /home/Client.py 3
+        build: unites1/.
+        networks:
+            - customnetwork
+
+
+    unites4:
+        image: unites4
+        command: python3.7 /home/Client.py 4
+        build: unites1/.
+        networks:
+            - customnetwork
+
+    unites5:
+        image: unites5
+        command: python3.7 /home/Client.py 5
+        build: unites1/.
+        networks:
+            - customnetwork
+
+
+
+        
