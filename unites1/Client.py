@@ -145,4 +145,4 @@ while(True):
 	ClientMultiSocket.connect((host, port))
 	ClientMultiSocket.send(data.encode("utf-8"))
 	ClientMultiSocket.close()
-	sleep(60)
+	sleep(10)

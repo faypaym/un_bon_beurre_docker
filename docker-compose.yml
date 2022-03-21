@@ -34,6 +34,9 @@ services:
         build: collector/.
         ports:
             - "7777"
+        depends_on:
+            - db
+            - inserts
         networks:
             customnetwork:
                 ipv4_address: 172.20.0.10
@@ -45,6 +48,8 @@ services:
         build: inserts/.
         ports:
             - "8888"
+        depends_on:
+            - db
         networks:
             customnetwork:
                 ipv4_address: 172.20.0.11
@@ -54,6 +59,8 @@ services:
         image: unites1
         command: python3.7 /home/Client.py 1
         build: unites1/.
+        depends_on:
+            - collector
         networks:
             - customnetwork
 
@@ -61,6 +68,8 @@ services:
         image: unites2
         command: python3.7 /home/Client.py 2
         build: unites1/.
+        depends_on:
+            - collector
         networks:
             - customnetwork
 
@@ -68,6 +77,8 @@ services:
         image: unites3
         command: python3.7 /home/Client.py 3
         build: unites1/.
+        depends_on:
+            - collector
         networks:
             - customnetwork
 
@@ -76,6 +87,8 @@ services:
         image: unites4
         command: python3.7 /home/Client.py 4
         build: unites1/.
+        depends_on:
+            - collector
         networks:
             - customnetwork
 
@@ -83,6 +96,8 @@ services:
         image: unites5
         command: python3.7 /home/Client.py 5
         build: unites1/.
+        depends_on:
+            - collector
         networks:
             - customnetwork
 
