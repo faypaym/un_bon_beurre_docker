@@ -22,7 +22,6 @@ def insert(data):
 	unit = json.loads(data)
 	print(unit);
 
-	print("tentative de co")
 	connection = mariadb.connect(user='root', password='', host="172.20.0.12", port="3306", database="un_bon_beurre")
 	cursor = connection.cursor()
 
@@ -36,7 +35,6 @@ def insert(data):
 	records = cursor.fetchall()
 
 	
-	print("premier select")
 	#inserer seulement si unit inconu
 	if cursor.rowcount == 0:
 
@@ -47,26 +45,42 @@ def insert(data):
 		connection.commit()
 
 	print("--automatons---")
-	print(len(unit["unit"]["automatons"]))
-	for x in range(len(unit["unit"]["automatons"])):
+
+
+	for x in range(len(unit["unit"]["automatons"]) -1):
+		
+		print("boucle")
+		print(x)
 
 		sql_select_Query = "select * from automatons where number = %s;"
 		record = (unit["unit"]["automatons"][x]["number"],)
-		print("in automatons")
-		print(record)
 		cursor.execute(sql_select_Query, record)
 		records = cursor.fetchall()
+
+		id_automaton = -1
+		for row in records:
+			id_automaton = row[0]
 
 		#creation automate
 		if cursor.rowcount == 0:
 			mySql_insert_query = """INSERT INTO automatons (id_unit, number, type) VALUES (%s, %s, %s); """
 			record = (unit["unit"]["number"], unit["unit"]["automatons"][x]["number"], unit["unit"]["automatons"][x]["type"], )
+			print("avant exec")
+			print(record)
 			cursor.execute(mySql_insert_query, record)
 			connection.commit()
 		
+
+		print("insertion production")
+
 		#données de production
-		mySql_insert_query = """INSERT INTO productions (id_automatons, id_unit, tankTemperature, outsideTemperature, milkTemperature, milkWeight, finalizedPrdocuctWeight, ph, k, naci, salmonel, ecoli, listeria, generatedTime) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s); """
-		record = (unit["unit"]["automatons"][x]["number"], unit["unit"]["number"], unit["unit"]["automatons"][x]["production"]["tankTemperature"], unit["unit"]["automatons"][x]["production"]["outsideTemperature"], unit["unit"]["automatons"][x]["production"]["milkTemperature"], unit["unit"]["automatons"][x]["production"]["milkWeight"], unit["unit"]["automatons"][x]["production"]["milkWeight"], unit["unit"]["automatons"][x]["production"]["ph"], unit["unit"]["automatons"][x]["k"], unit["unit"]["automatons"][x]["naci"], unit["unit"]["automatons"][x]["salmonel"], unit["unit"]["automatons"][x]["ecoli"], unit["unit"]["automatons"][x]["listeria"], unit["unit"]["automatons"][x]["generatedTime"],)
+		mySql_insert_query = """INSERT INTO productions (id_automaton, id_unit, tankTemperature, outsideTemperature, milkWeight, finalizedProductWeight, ph, k, naci, salmonel, ecoli, listeria, generatedTime) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s); """
+		record = (id_automaton, unit["unit"]["number"], unit["unit"]["automatons"][x]["production"]["tankTemperature"], unit["unit"]["automatons"][x]["production"]["outsideTemperature"], unit["unit"]["automatons"][x]["production"]["milkWeight"], 2, unit["unit"]["automatons"][x]["production"]["ph"], unit["unit"]["automatons"][x]["production"]["k"], unit["unit"]["automatons"][x]["production"]["naci"], unit["unit"]["automatons"][x]["production"]["salmonel"], unit["unit"]["automatons"][x]["production"]["ecoli"], unit["unit"]["automatons"][x]["production"]["listeria"], unit["unit"]["automatons"][x]["production"]["generatedTime"],)
+		
+		print("record:")
+		print(record)
+
+		
 		cursor.execute(mySql_insert_query, record)
 		connection.commit()
 
