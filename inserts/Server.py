@@ -57,7 +57,7 @@ def insert(data):
 		cursor.execute(sql_select_Query, record)
 		records = cursor.fetchall()
 
-		id_automaton = -1
+		id_automaton =-1
 		for row in records:
 			id_automaton = row[0]
 
